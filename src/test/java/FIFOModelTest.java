@@ -1,25 +1,47 @@
+import org.junit.Before;
 import org.junit.Test;
+
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
 public class FIFOModelTest {
 
-    FIFOModel fifoModel = new FIFOModel();
-    Date day1 = new Date(12,12,2011);
-    Date day2 = new Date(12,12,2012);
-    Date day3 = new Date(13,12,2012);
-    Date day4 = new Date(14,12,2012);
-    Date day5 = new Date(15,12,2012);
+    FIFOModel fifoModel;
+    Date day1;
+    Date day2;
+    Date day3;
+    Date day4;
+    Date day5;
+    @Before
+    public void setUp() throws ParseException {
+        fifoModel = new FIFOModel();
+        String stringDay1 = "12.12.2011";
+        String stringDay2 = "12.12.2012";
+        String stringDay3 = "13.12.2012";
+        String stringDay4 = "14.12.2012";
+        String stringDay5 = "15.12.2012";
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.mm.yyyy");
+        day1 = formatter.parse(stringDay1);
+        day2 = formatter.parse(stringDay2);
+        day3 = formatter.parse(stringDay3);
+        day4 = formatter.parse(stringDay4);
+        day5 = formatter.parse(stringDay5);
+    }
+
     /**
      * Попытка купить, продать или получить прибыльность для несозданного товара.
      */
     @Test
     public void notCreatedProduct() {
-        FIFOModel.status result = fifoModel.purchase("iphone", 2, 1000f, day2);
-        assertEquals(FIFOModel.status.ERROR, result);
+        FIFOModel.Status result = fifoModel.purchase("iphone", 2, 1000f, day2);
+        assertEquals(FIFOModel.Status.ERROR, result);
 
         result = fifoModel.demand("iphone", 2, 1000f, day2);
-        assertEquals(FIFOModel.status.ERROR, result);
+        assertEquals(FIFOModel.Status.ERROR, result);
 
         float salesResult = fifoModel.salesReport("iphone", day2);
         assertEquals(0f, salesResult, 0f);
@@ -31,11 +53,11 @@ public class FIFOModelTest {
     @Test
     public void createdProduct() {
         fifoModel.newProduct("iphone");
-        FIFOModel.status result = fifoModel.purchase("iphone", 2, 1000f, day2);
-        assertEquals(FIFOModel.status.OK, result);
+        FIFOModel.Status result = fifoModel.purchase("iphone", 2, 1000f, day2);
+        assertEquals(FIFOModel.Status.OK, result);
 
         result = fifoModel.demand("iphone", 2, 5000f, day2);
-        assertEquals(FIFOModel.status.OK, result);
+        assertEquals(FIFOModel.Status.OK, result);
 
         float salesResult = fifoModel.salesReport("iphone", day2);
         assertEquals(8000f, salesResult, 0f);
@@ -87,8 +109,8 @@ public class FIFOModelTest {
     public void sellBeforeBuy() {
         fifoModel.newProduct("iphone");
         fifoModel.purchase("iphone", 2, 1000f, day2);
-        FIFOModel.status result = fifoModel.demand("iphone", 2, 5000f, day1);
-        assertEquals(FIFOModel.status.ERROR, result);
+        FIFOModel.Status result = fifoModel.demand("iphone", 2, 5000f, day1);
+        assertEquals(FIFOModel.Status.ERROR, result);
     }
 
     /**
@@ -101,8 +123,8 @@ public class FIFOModelTest {
     public void sellMoreThanBuy() {
         fifoModel.newProduct("iphone");
         fifoModel.purchase("iphone", 2, 1000f, day2);
-        FIFOModel.status result = fifoModel.demand("iphone", 5, 5000f, day3);
-        assertEquals(FIFOModel.status.ERROR, result);
+        FIFOModel.Status result = fifoModel.demand("iphone", 5, 5000f, day3);
+        assertEquals(FIFOModel.Status.ERROR, result);
     }
 
     /**
@@ -116,9 +138,9 @@ public class FIFOModelTest {
     public void sellMoreThanBuy2() {
         fifoModel.newProduct("iphone");
         fifoModel.purchase("iphone", 2, 1000f, day2);
-        FIFOModel.status result = fifoModel.demand("iphone", 2, 5000f, day3);
+        FIFOModel.Status result = fifoModel.demand("iphone", 2, 5000f, day3);
         result = fifoModel.demand("iphone", 2, 5000f, day3);
-        assertEquals(FIFOModel.status.ERROR, result);
+        assertEquals(FIFOModel.Status.ERROR, result);
     }
 
     /**
@@ -127,7 +149,7 @@ public class FIFOModelTest {
     @Test
     public void dublicate() {
         fifoModel.newProduct("iphone");
-        FIFOModel.status result = fifoModel.newProduct("iphone");
-        assertEquals(FIFOModel.status.ERROR, result);
+        FIFOModel.Status result = fifoModel.newProduct("iphone");
+        assertEquals(FIFOModel.Status.ERROR, result);
     }
 }

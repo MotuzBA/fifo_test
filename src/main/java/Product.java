@@ -1,7 +1,6 @@
-import java.util.HashMap;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Товар.
@@ -27,7 +26,6 @@ public class Product {
      * Список, в котором хранится прибыль от продажи за конкретный день.
      */
     private List<Profitability> profitability = new LinkedList<Profitability>();
-    private Map<String, Profitability> profitMap = new HashMap<String, Profitability>();
 
     public Product(String name) {
         this.name = name;
